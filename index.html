@@ -3,292 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>H.S. Hospital — Prescription</title>
+<title>H.S. Hospital — Documents</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  :root{
-    --ink:#1b2b34;
-    --ink-soft:#4a5d68;
-    --paper:#f7f5f0;
-    --card:#ffffff;
-    --line:#e2ddd2;
-    --teal:#0f6e63;
-    --teal-deep:#0a4f47;
-    --amber:#c97b2e;
-    --danger:#b3432f;
-    --radius:10px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--paper);
-    color:var(--ink);
-    padding-bottom:40px;
-  }
-  header{
-    background:var(--teal-deep);
-    color:#fff;
-    padding:18px 16px 16px;
-    position:sticky;
-    top:0;
-    z-index:10;
-  }
-  header .crest{
-    font-size:11px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    opacity:.75;
-    margin-bottom:2px;
-  }
-  header h1{
-    margin:0;
-    font-size:19px;
-    font-weight:700;
-    letter-spacing:.01em;
-  }
-  header .sub{
-    font-size:12px;
-    opacity:.8;
-    margin-top:3px;
-  }
-  main{
-    max-width:640px;
-    margin:0 auto;
-    padding:16px;
-  }
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:16px;
-    margin-bottom:14px;
-  }
-  .card h2{
-    font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    color:var(--teal-deep);
-    margin:0 0 12px;
-    font-weight:700;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .card h2 .num{
-    width:20px;height:20px;
-    border-radius:50%;
-    background:var(--teal-deep);
-    color:#fff;
-    font-size:11px;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
-  label{
-    display:block;
-    font-size:12.5px;
-    color:var(--ink-soft);
-    margin-bottom:4px;
-    font-weight:600;
-  }
-  input[type=text], input[type=number], input[type=date], textarea, select{
-    width:100%;
-    padding:10px 11px;
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    font-size:15px;
-    font-family:inherit;
-    color:var(--ink);
-    background:#fff;
-    margin-bottom:12px;
-  }
-  input:focus, textarea:focus, select:focus{
-    outline:none;
-    border-color:var(--teal);
-  }
-  .row2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-  .row3{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:10px;
-  }
-  .toggle{
-    display:flex;
-    background:var(--paper);
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:3px;
-    margin-bottom:14px;
-  }
-  .toggle button{
-    flex:1;
-    padding:9px;
-    border:none;
-    background:none;
-    border-radius:6px;
-    font-size:14px;
-    font-weight:600;
-    color:var(--ink-soft);
-    cursor:pointer;
-  }
-  .toggle button.active{
-    background:var(--teal-deep);
-    color:#fff;
-  }
-  textarea{
-    min-height:120px;
-    resize:vertical;
-    line-height:1.5;
-  }
-  .rx-row{
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:12px;
-    margin-bottom:10px;
-    position:relative;
-    background:var(--paper);
-  }
-  .rx-row .grid3{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .rx-row .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-bottom:8px;
-  }
-  .rx-row label{margin-bottom:3px;font-size:11.5px;}
-  .rx-row input, .rx-row select{margin-bottom:0;padding:8px 10px;font-size:14px;}
-  .rx-row textarea{min-height:42px;margin-bottom:0;padding:8px 10px;font-size:14px;}
-  .remove-row{
-    position:absolute;
-    top:8px; right:8px;
-    background:none;
-    border:none;
-    color:var(--danger);
-    font-size:18px;
-    line-height:1;
-    cursor:pointer;
-    padding:2px 6px;
-  }
-  .add-row{
-    width:100%;
-    padding:11px;
-    border:1.5px dashed var(--teal);
-    background:none;
-    color:var(--teal-deep);
-    border-radius:8px;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-  }
-  .btn-primary{
-    width:100%;
-    padding:15px;
-    background:var(--teal-deep);
-    color:#fff;
-    border:none;
-    border-radius:9px;
-    font-size:16px;
-    font-weight:700;
-    cursor:pointer;
-    letter-spacing:.01em;
-  }
-  .btn-primary:disabled{
-    background:#9bb3ae;
-    cursor:not-allowed;
-  }
-  .btn-primary:active:not(:disabled){
-    transform:translateY(1px);
-  }
-  .status{
-    text-align:center;
-    font-size:13.5px;
-    color:var(--ink-soft);
-    margin-top:10px;
-    min-height:18px;
-  }
-  .status.error{color:var(--danger);font-weight:600;}
-  .result{
-    display:none;
-    background:#eef6f3;
-    border:1.5px solid var(--teal);
-    border-radius:var(--radius);
-    padding:16px;
-    text-align:center;
-  }
-  .result.show{display:block;}
-  .result p{
-    margin:0 0 12px;
-    font-size:13.5px;
-    color:var(--teal-deep);
-    font-weight:600;
-  }
-  .link-box{
-    display:flex;
-    gap:8px;
-    margin-bottom:12px;
-  }
-  .link-box input{
-    margin:0;
-    font-size:12.5px;
-    background:#fff;
-  }
-  .link-box button{
-    padding:0 16px;
-    border:none;
-    background:var(--teal-deep);
-    color:#fff;
-    border-radius:8px;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .share-row{
-    display:flex;
-    gap:10px;
-  }
-  .share-row a, .share-row button{
-    flex:1;
-    padding:12px;
-    border-radius:8px;
-    text-decoration:none;
-    font-size:14px;
-    font-weight:700;
-    text-align:center;
-    border:none;
-    cursor:pointer;
-  }
-  .share-whatsapp{background:#1f8a5c;color:#fff;}
-  .share-new{background:#fff;color:var(--teal-deep);border:1.5px solid var(--teal-deep) !important;}
-  .footer-note{
-    text-align:center;
-    font-size:11.5px;
-    color:#9aa6a0;
-    margin-top:20px;
-    line-height:1.6;
-  }
+:root{
+  --ink:#1b2b34;--ink-soft:#4a5d68;--paper:#f7f5f0;--card:#ffffff;
+  --line:#e2ddd2;--teal:#0f6e63;--teal-deep:#0a4f47;--danger:#b3432f;--radius:10px;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--paper);color:var(--ink);padding-bottom:40px;}
+header{background:var(--teal-deep);color:#fff;padding:16px 16px 0;}
+header .crest{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-bottom:2px;}
+header h1{margin:0 0 2px;font-size:19px;font-weight:700;}
+header .sub{font-size:12px;opacity:.8;margin-bottom:12px;}
+.top-tabs{display:flex;gap:0;}
+.top-tabs button{flex:1;padding:11px 0;border:none;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);font-size:14px;font-weight:600;cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;}
+.top-tabs button:last-child{margin-right:0;}
+.top-tabs button.active{background:#fff;color:var(--teal-deep);}
+main{max-width:640px;margin:0 auto;padding:16px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--teal-deep);margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.card h2 .num{width:20px;height:20px;border-radius:50%;background:var(--teal-deep);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:4px;font-weight:600;}
+input[type=text],input[type=number],input[type=date],textarea,select{width:100%;padding:10px 11px;border:1.5px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff;margin-bottom:12px;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.toggle{display:flex;background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:3px;margin-bottom:14px;}
+.toggle button{flex:1;padding:9px;border:none;background:none;border-radius:6px;font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+.toggle button.active{background:var(--teal-deep);color:#fff;}
+textarea{min-height:120px;resize:vertical;line-height:1.5;}
+.rx-row{border:1.5px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px;position:relative;background:var(--paper);}
+.rx-row .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+.rx-row .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.rx-row label{margin-bottom:3px;font-size:11.5px;}
+.rx-row input,.rx-row select{margin-bottom:0;padding:8px 10px;font-size:14px;}
+.remove-row{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--danger);font-size:18px;line-height:1;cursor:pointer;padding:2px 6px;}
+.add-row{width:100%;padding:11px;border:1.5px dashed var(--teal);background:none;color:var(--teal-deep);border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.btn-primary{width:100%;padding:15px;background:var(--teal-deep);color:#fff;border:none;border-radius:9px;font-size:16px;font-weight:700;cursor:pointer;}
+.btn-primary:disabled{background:#9bb3ae;cursor:not-allowed;}
+.status{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:10px;min-height:18px;}
+.status.error{color:var(--danger);font-weight:600;}
+.result{display:none;background:#eef6f3;border:1.5px solid var(--teal);border-radius:var(--radius);padding:16px;text-align:center;margin-top:12px;}
+.result.show{display:block;}
+.result p{margin:0 0 12px;font-size:13.5px;color:var(--teal-deep);font-weight:600;}
+.link-box{display:flex;gap:8px;margin-bottom:12px;}
+.link-box input{margin:0;font-size:12.5px;background:#fff;}
+.link-box button{padding:0 16px;border:none;background:var(--teal-deep);color:#fff;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.share-row{display:flex;gap:10px;}
+.share-row a,.share-row button{flex:1;padding:12px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700;text-align:center;border:none;cursor:pointer;}
+.share-whatsapp{background:#1f8a5c;color:#fff;}
+.share-new{background:#fff;color:var(--teal-deep);border:1.5px solid var(--teal-deep) !important;}
+.footer-note{text-align:center;font-size:11.5px;color:#9aa6a0;margin-top:20px;line-height:1.6;}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;overflow-y:auto;padding:20px 12px;}
+.modal-overlay.show{display:flex;align-items:flex-start;justify-content:center;}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:560px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
+.modal-header{background:var(--teal-deep);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.modal-header span{font-size:15px;font-weight:700;}
+.modal-header button{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;padding:0 4px;}
+.preview-body{padding:20px 18px;font-size:13.5px;line-height:1.7;color:var(--ink);}
+.preview-body .ph{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+.preview-body .plabel{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:700;margin-bottom:4px;}
+.preview-body .pval{font-size:14px;font-weight:600;color:var(--ink);}
+.preview-body .rx-symbol{font-size:22px;font-style:italic;color:var(--teal);font-weight:700;margin:14px 0 6px;}
+.preview-body .rx-line{padding:6px 0;border-bottom:1px dashed #e8e4da;font-size:14px;}
+.preview-body .rx-line:last-child{border:none;}
+.modal-footer{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line);background:#fafaf8;}
+.modal-footer button{flex:1;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;}
+.btn-edit{background:#fff;color:var(--teal-deep);border:1.5px solid var(--teal-deep) !important;}
+.btn-confirm{background:var(--teal-deep);color:#fff;}
 </style>
 </head>
 <body>
 
 <header>
   <div class="crest">H.S. HOSPITAL · COIMBATORE</div>
-  <h1>Prescription</h1>
+  <h1>Clinical Documents</h1>
   <div class="sub">Dr. R. Devaraja, MD (Paediatrics) · Reg. No. 100066</div>
+  <div class="top-tabs">
+    <button id="tabRx" class="active" onclick="switchTab('rx')">📋 Prescription</button>
+    <button id="tabMC" onclick="switchTab('mc')">🏥 Medical Certificate</button>
+  </div>
 </header>
 
 <main>
 
-  <div class="card">
+<!-- ===== PRESCRIPTION SECTION ===== -->
+<div id="rxSection">
+  <div class="card" style="margin-top:16px">
     <h2><span class="num">1</span>Patient</h2>
     <label for="pname">Patient name</label>
     <input type="text" id="pname" placeholder="Full name">
@@ -301,14 +104,14 @@
         <label for="pgender">Gender</label>
         <select id="pgender">
           <option value="">Select</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
+          <option>Male</option>
+          <option>Female</option>
         </select>
       </div>
     </div>
     <label for="pdate">Date</label>
     <input type="date" id="pdate">
-    <label for="pdiag">Diagnosis / notes <span style="font-weight:400;color:#9aa6a0;">(optional)</span></label>
+    <label for="pdiag">Diagnosis <span style="font-weight:400;color:#9aa6a0;">(optional)</span></label>
     <input type="text" id="pdiag" placeholder="e.g. Acute bronchiolitis">
   </div>
 
@@ -318,11 +121,9 @@
       <button id="tabQuick" class="active" onclick="setMode('quick')">Quick text</button>
       <button id="tabStruct" onclick="setMode('struct')">Structured</button>
     </div>
-
     <div id="quickMode">
-      <textarea id="quickText" placeholder="Type the prescription freely...&#10;&#10;e.g.&#10;1. Tab. Paracetamol 250mg — 1 tsp TDS x 3 days&#10;2. Syp. Ambrodil — 5ml BD x 5 days"></textarea>
+      <textarea id="quickText" placeholder="Type prescription freely...&#10;&#10;e.g.&#10;1. Tab. Paracetamol 250mg — 1 tab TDS x 3 days&#10;2. Syp. Ambrodil — 5ml BD x 5 days"></textarea>
     </div>
-
     <div id="structMode" style="display:none;">
       <div id="rxRows"></div>
       <button type="button" class="add-row" onclick="addRow()">+ Add medicine</button>
@@ -334,33 +135,113 @@
     <textarea id="advice" style="min-height:70px;" placeholder="e.g. Plenty of fluids. Review after 3 days if fever persists."></textarea>
   </div>
 
-  <button class="btn-primary" id="genBtn" onclick="generateAndUpload()">Generate &amp; Get Link</button>
-  <div class="status" id="status"></div>
-
-  <div class="result" id="result">
+  <button class="btn-primary" onclick="showPreview()">Preview &amp; Generate</button>
+  <div class="status" id="rxStatus"></div>
+  <div class="result" id="rxResult">
     <p>Prescription ready</p>
     <div class="link-box">
-      <input type="text" id="linkOut" readonly>
-      <button onclick="copyLink()">Copy</button>
+      <input type="text" id="rxLink" readonly>
+      <button onclick="copyLink('rxLink')">Copy</button>
     </div>
     <div class="share-row">
-      <a id="waLink" class="share-whatsapp" href="#" target="_blank">Share on WhatsApp</a>
-      <button class="share-new" onclick="resetForm()">New Rx</button>
+      <a id="rxWaLink" class="share-whatsapp" href="#" target="_blank">WhatsApp</a>
+      <button class="share-new" onclick="resetRx()">New Rx</button>
     </div>
   </div>
+</div>
 
-  <div class="footer-note">H.S. Hospital, 19A Gandhinagar, Kavundampalayam, Coimbatore – 641030<br>0422 2440277 / 2440877 · hshospital@yahoo.com</div>
+<!-- ===== MEDICAL CERTIFICATE SECTION ===== -->
+<div id="mcSection" style="display:none;">
+  <div class="card" style="margin-top:16px">
+    <h2><span class="num">1</span>Patient Details</h2>
+    <label for="mcName">Patient name</label>
+    <input type="text" id="mcName" placeholder="Full name">
+    <div class="row3">
+      <div>
+        <label for="mcAge">Age</label>
+        <input type="text" id="mcAge" placeholder="e.g. 5 yrs">
+      </div>
+      <div>
+        <label for="mcGender">Gender</label>
+        <select id="mcGender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
+      <div>
+        <label for="mcWeight">Weight (kg)</label>
+        <input type="number" id="mcWeight" placeholder="e.g. 18">
+      </div>
+    </div>
+    <label for="mcDiag">Diagnosis / Condition</label>
+    <input type="text" id="mcDiag" placeholder="e.g. Acute febrile illness">
+  </div>
 
+  <div class="card">
+    <h2><span class="num">2</span>Rest Period</h2>
+    <div class="row2">
+      <div>
+        <label for="mcFrom">From date</label>
+        <input type="date" id="mcFrom">
+      </div>
+      <div>
+        <label for="mcTo">To date</label>
+        <input type="date" id="mcTo">
+      </div>
+    </div>
+    <label for="mcRemarks">Additional remarks <span style="font-weight:400;color:#9aa6a0;">(optional)</span></label>
+    <textarea id="mcRemarks" style="min-height:60px;" placeholder="e.g. May resume school after review. Avoid physical exertion."></textarea>
+  </div>
+
+  <button class="btn-primary" onclick="previewMC()">Preview &amp; Generate</button>
+  <div class="status" id="mcStatus"></div>
+  <div class="result" id="mcResult">
+    <p>Medical Certificate ready</p>
+    <div class="link-box">
+      <input type="text" id="mcLink" readonly>
+      <button onclick="copyLink('mcLink')">Copy</button>
+    </div>
+    <div class="share-row">
+      <a id="mcWaLink" class="share-whatsapp" href="#" target="_blank">WhatsApp</a>
+      <button class="share-new" onclick="resetMC()">New Certificate</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">H.S. Hospital, 19A Gandhinagar, Kavundampalayam, Coimbatore – 641030<br>0422 2440277 / 2440877 · hshospital@yahoo.com</div>
 </main>
 
+<!-- Preview Modal -->
+<div class="modal-overlay" id="previewOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span id="modalTitle">Preview</span>
+      <button onclick="closePreview()">&times;</button>
+    </div>
+    <div class="preview-body" id="previewBody"></div>
+    <div class="modal-footer">
+      <button class="btn-edit" onclick="closePreview()">✏️ Edit</button>
+      <button class="btn-confirm" id="confirmBtn">Generate &amp; Get Link</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ---- CONFIG ----
 const SUPABASE_URL = "https://ihbbihdjyphngxgoazxt.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImloYmJpaGRqeXBobmd4Z29henh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMzUxMzEsImV4cCI6MjA5MzkxMTEzMX0.0vCyklt_PDLljxXuIbSr19QTmHRh5VU-0PeFHmYkqT4";
 const BUCKET = "prescriptions";
-
 let rowCount = 0;
 
+// ---- TAB SWITCH ----
+function switchTab(tab){
+  document.getElementById('tabRx').classList.toggle('active', tab==='rx');
+  document.getElementById('tabMC').classList.toggle('active', tab==='mc');
+  document.getElementById('rxSection').style.display = tab==='rx' ? 'block' : 'none';
+  document.getElementById('mcSection').style.display = tab==='mc' ? 'block' : 'none';
+}
+
+// ---- RX MODE TOGGLE ----
 function setMode(mode){
   document.getElementById('tabQuick').classList.toggle('active', mode==='quick');
   document.getElementById('tabStruct').classList.toggle('active', mode==='struct');
@@ -369,6 +250,7 @@ function setMode(mode){
   if(mode==='struct' && rowCount===0) addRow();
 }
 
+// ---- ADD MEDICINE ROW ----
 function addRow(){
   rowCount++;
   const id = 'row_'+rowCount;
@@ -382,28 +264,21 @@ function addRow(){
         <label>Form</label>
         <select class="rx-form">
           <option value="">— Form —</option>
-          <option>Tab.</option>
-          <option>Syrup</option>
-          <option>Ointment</option>
-          <option>Drops</option>
-          <option>Inj.</option>
-          <option>Cap.</option>
-          <option>Cream</option>
-          <option>Gel</option>
-          <option>Powder</option>
-          <option>Inhaler</option>
-          <option>Suppository</option>
+          <option>Tab.</option><option>Syrup</option><option>Ointment</option>
+          <option>Drops</option><option>Inj.</option><option>Cap.</option>
+          <option>Cream</option><option>Gel</option><option>Powder</option>
+          <option>Inhaler</option><option>Suppository</option>
         </select>
       </div>
       <div style="grid-column:span 2">
         <label>Drug name &amp; strength</label>
-        <input type="text" class="rx-drug" placeholder="e.g. Paracetamol 250mg / Ambroxol 15mg/5ml">
+        <input type="text" class="rx-drug" placeholder="e.g. Paracetamol 250mg">
       </div>
     </div>
     <div class="grid3">
       <div>
         <label>Dose</label>
-        <input type="text" class="rx-dose" placeholder="e.g. 5ml / 1 tab">
+        <input type="text" class="rx-dose" placeholder="e.g. 5ml">
       </div>
       <div>
         <label>Frequency</label>
@@ -414,329 +289,362 @@ function addRow(){
           <option value="every 12 hours">Every 12 hrs</option>
           <option value="every 24 hours">Every 24 hrs</option>
           <option value="every 48 hours">Every 48 hrs</option>
-          <option value="OD">OD</option>
-          <option value="BD">BD</option>
-          <option value="TID">TID</option>
-          <option value="QID">QID</option>
-          <option value="SOS">SOS</option>
-          <option value="Stat">Stat</option>
+          <option value="OD">OD</option><option value="BD">BD</option>
+          <option value="TID">TID</option><option value="QID">QID</option>
+          <option value="SOS">SOS</option><option value="Stat">Stat</option>
         </select>
       </div>
       <div>
         <label>Duration</label>
         <select class="rx-duration">
           <option value="">— Days —</option>
-          <option value="1 day">1 day</option>
-          <option value="2 days">2 days</option>
-          <option value="3 days">3 days</option>
-          <option value="4 days">4 days</option>
-          <option value="5 days">5 days</option>
-          <option value="7 days">7 days</option>
-          <option value="10 days">10 days</option>
-          <option value="14 days">14 days</option>
-          <option value="21 days">21 days</option>
-          <option value="1 month">1 month</option>
-          <option value="2 months">2 months</option>
-          <option value="3 months">3 months</option>
-          <option value="till review">Till review</option>
-          <option value="continuous">Continuous</option>
+          <option>1 day</option><option>2 days</option><option>3 days</option>
+          <option>4 days</option><option>5 days</option><option>7 days</option>
+          <option>10 days</option><option>14 days</option><option>21 days</option>
+          <option>1 month</option><option>2 months</option><option>3 months</option>
+          <option>Till review</option><option>Continuous</option>
         </select>
       </div>
     </div>
     <div>
       <label>Instructions</label>
-      <input type="text" class="rx-instr" placeholder="e.g. After food, Before food, With warm water">
+      <input type="text" class="rx-instr" placeholder="e.g. After food">
     </div>
   `;
   document.getElementById('rxRows').appendChild(div);
 }
 
 function getStructuredLines(){
-  const rows = document.querySelectorAll('.rx-row');
-  const lines = [];
-  rows.forEach(row => {
+  return [...document.querySelectorAll('.rx-row')].map(row => {
     const form = row.querySelector('.rx-form').value.trim();
     const drug = row.querySelector('.rx-drug').value.trim();
     const dose = row.querySelector('.rx-dose').value.trim();
     const freq = row.querySelector('.rx-freq').value.trim();
-    const dur = row.querySelector('.rx-duration').value.trim();
-    const instr = row.querySelector('.rx-instr').value.trim();
-    if(drug){
-      let line = [form, drug].filter(Boolean).join(' ');
-      const middle = [dose, freq].filter(Boolean).join(' ');
-      if(middle) line += ' — ' + middle;
-      if(dur) line += ' × ' + dur;
-      if(instr) line += ' (' + instr + ')';
-      lines.push(line);
-    }
-  });
-  return lines;
+    const dur  = row.querySelector('.rx-duration').value.trim();
+    const instr= row.querySelector('.rx-instr').value.trim();
+    if(!drug) return null;
+    let line = [form, drug].filter(Boolean).join(' ');
+    const mid = [dose, freq].filter(Boolean).join(' ');
+    if(mid) line += ' — ' + mid;
+    if(dur)  line += ' × ' + dur;
+    if(instr) line += ' (' + instr + ')';
+    return line;
+  }).filter(Boolean);
 }
 
-function isQuickMode(){
-  return document.getElementById('tabQuick').classList.contains('active');
+// ---- UTILS ----
+function formatDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return `${String(d.getDate()).padStart(2,'0')} ${d.toLocaleString('en-GB',{month:'short'})} ${d.getFullYear()}`;
 }
-
-function setStatus(msg, isError){
-  const el = document.getElementById('status');
+function setStatus(id, msg, isError){
+  const el = document.getElementById(id);
   el.textContent = msg;
   el.className = 'status' + (isError ? ' error' : '');
 }
-
-async function generateAndUpload(){
-  const name = document.getElementById('pname').value.trim();
-  const age = document.getElementById('page').value.trim();
-  const gender = document.getElementById('pgender').value;
-  const dateVal = document.getElementById('pdate').value;
-  const diag = document.getElementById('pdiag').value.trim();
-  const advice = document.getElementById('advice').value.trim();
-
-  if(!name){
-    setStatus("Enter the patient's name first.", true);
-    document.getElementById('pname').focus();
-    return;
-  }
-
-  let rxLines = [];
-  if(isQuickMode()){
-    const txt = document.getElementById('quickText').value.trim();
-    if(!txt){
-      setStatus("Enter the prescription text.", true);
-      return;
-    }
-    rxLines = txt.split('\n').filter(l => l.trim().length>0);
-  } else {
-    rxLines = getStructuredLines();
-    if(rxLines.length===0){
-      setStatus("Add at least one medicine.", true);
-      return;
-    }
-  }
-
-  const btn = document.getElementById('genBtn');
-  btn.disabled = true;
-  setStatus("Generating PDF...");
-
-  try{
-    const dateStr = dateVal ? formatDate(dateVal) : formatDate(new Date().toISOString().slice(0,10));
-    const pdfBlob = buildPDF({name, age, gender, dateStr, diag, rxLines, advice});
-
-    setStatus("Uploading...");
-    const fileName = `rx_${Date.now()}_${slugify(name)}.pdf`;
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fileName}`;
-
-    const res = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY,
-        'Content-Type': 'application/pdf'
-      },
-      body: pdfBlob
-    });
-
-    if(!res.ok){
-      const errText = await res.text();
-      throw new Error(`Upload failed (${res.status}): ${errText}`);
-    }
-
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fileName}`;
-    showResult(publicUrl, name);
-    setStatus("");
-  } catch(err){
-    console.error(err);
-    setStatus("Something went wrong: " + err.message, true);
-  } finally {
-    btn.disabled = false;
-  }
+function copyLink(inputId){
+  const inp = document.getElementById(inputId);
+  inp.select(); inp.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(inp.value).then(()=>setStatus(inputId==='rxLink'?'rxStatus':'mcStatus','Link copied.',false)).catch(()=>document.execCommand('copy'));
+}
+function closePreview(){
+  document.getElementById('previewOverlay').classList.remove('show');
+}
+async function uploadPDF(blob, prefix){
+  const fname = `${prefix}_${Date.now()}.pdf`;
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${fname}`,{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'apikey':SUPABASE_ANON_KEY,'Content-Type':'application/pdf'},
+    body:blob
+  });
+  if(!res.ok) throw new Error(`Upload failed (${res.status})`);
+  return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${fname}`;
 }
 
-function slugify(str){
-  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,30) || 'patient';
-}
-
-function formatDate(isoStr){
-  const d = new Date(isoStr + 'T00:00:00');
-  const day = String(d.getDate()).padStart(2,'0');
-  const month = d.toLocaleString('en-GB', {month:'short'});
-  const year = d.getFullYear();
-  return `${day} ${month} ${year}`;
-}
-
-function buildPDF({name, age, gender, dateStr, diag, rxLines, advice}){
+// ---- PDF LETTERHEAD HELPER ----
+function drawLetterhead(doc){
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({unit:'pt', format:'a4'});
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 50;
   let y = 50;
-
-  // Letterhead
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
   doc.setTextColor(15,110,99);
-  doc.text('H.S. HOSPITAL', margin, y);
-  y += 16;
+  doc.text('H.S. HOSPITAL', margin, y); y+=16;
   doc.setFontSize(9.5);
   doc.setFont('helvetica','normal');
   doc.setTextColor(80,80,80);
-  doc.text('19A Gandhinagar, Kavundampalayam, Coimbatore - 641030', margin, y);
-  y += 12;
-  doc.text('Ph: 0422 2440277 / 2440877  |  hshospital@yahoo.com', margin, y);
-  y += 18;
-  doc.setDrawColor(15,110,99);
-  doc.setLineWidth(1.2);
-  doc.line(margin, y, pageWidth-margin, y);
-  y += 20;
-
-  // Doctor line
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(11);
-  doc.setTextColor(30,40,45);
+  doc.text('19A Gandhinagar, Kavundampalayam, Coimbatore - 641030', margin, y); y+=12;
+  doc.text('Ph: 0422 2440277 / 2440877  |  hshospital@yahoo.com', margin, y); y+=18;
+  doc.setDrawColor(15,110,99); doc.setLineWidth(1.2);
+  doc.line(margin, y, pageWidth-margin, y); y+=20;
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(30,40,45);
   doc.text('Dr. R. Devaraja, MD (Paediatrics)', margin, y);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(9.5);
-  doc.setTextColor(100,100,100);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(100,100,100);
   doc.text('Consultant Paediatrician  |  Reg. No. 100066', margin, y+12);
-  y += 34;
+  y+=34;
+  doc.setDrawColor(220,220,220); doc.setLineWidth(0.7);
+  doc.line(margin, y, pageWidth-margin, y); y+=18;
+  return y;
+}
 
-  // Patient block
-  doc.setDrawColor(220,220,220);
-  doc.setLineWidth(0.7);
-  doc.line(margin, y, pageWidth-margin, y);
-  y += 18;
-
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(10.5);
-  doc.setTextColor(30,40,45);
-  doc.text('Patient:', margin, y);
-  doc.setFont('helvetica','normal');
-  doc.text(name, margin+55, y);
-
-  doc.setFont('helvetica','bold');
-  doc.text('Date:', pageWidth-margin-140, y);
-  doc.setFont('helvetica','normal');
-  doc.text(dateStr, pageWidth-margin-105, y);
-  y += 16;
-
-  if(age || gender){
-    doc.setFont('helvetica','bold');
-    doc.text('Age / Gender:', margin, y);
-    doc.setFont('helvetica','normal');
-    const ageGenderStr = [age, gender].filter(Boolean).join(' / ');
-    doc.text(ageGenderStr, margin+85, y);
-    y += 16;
-  }
-  if(diag){
-    doc.setFont('helvetica','bold');
-    doc.text('Diagnosis:', margin, y);
-    doc.setFont('helvetica','normal');
-    const diagLines = doc.splitTextToSize(diag, pageWidth-margin*2-75);
-    doc.text(diagLines, margin+75, y);
-    y += 14*diagLines.length;
-  }
-  y += 10;
-
-  doc.setDrawColor(220,220,220);
-  doc.line(margin, y, pageWidth-margin, y);
-  y += 26;
-
-  // Rx symbol
-  doc.setFont('helvetica','bolditalic');
-  doc.setFontSize(20);
-  doc.setTextColor(15,110,99);
-  doc.text('Rx', margin, y);
-  y += 22;
-
-  // Medicines
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(11.5);
-  doc.setTextColor(30,40,45);
-  rxLines.forEach((line, idx) => {
-    const wrapped = doc.splitTextToSize(`${idx+1}.  ${line}`, pageWidth-margin*2-10);
-    if(y > 720){ doc.addPage(); y = 50; }
-    doc.text(wrapped, margin+10, y);
-    y += 17*wrapped.length + 6;
-  });
-
-  // Advice
-  if(advice){
-    y += 10;
-    doc.setDrawColor(220,220,220);
-    doc.line(margin, y, pageWidth-margin, y);
-    y += 18;
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(10.5);
-    doc.text('Advice:', margin, y);
-    y += 15;
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(10.5);
-    const adviceLines = doc.splitTextToSize(advice, pageWidth-margin*2);
-    doc.text(adviceLines, margin, y);
-    y += 14*adviceLines.length;
-  }
-
-  // E-signature
-  const pageHeight2 = doc.internal.pageSize.getHeight();
-  let sigY = Math.max(y + 40, pageHeight2 - 90);
-  if(sigY > pageHeight2 - 60){ doc.addPage(); sigY = 100; }
-  doc.setDrawColor(180,180,180);
-  doc.setLineWidth(0.6);
+function drawSignature(doc){
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 50;
+  let sigY = pageHeight - 80;
+  doc.setDrawColor(180,180,180); doc.setLineWidth(0.6);
   doc.line(pageWidth-margin-160, sigY, pageWidth-margin, sigY);
-  doc.setFont('helvetica','italic');
-  doc.setFontSize(13);
-  doc.setTextColor(15,110,99);
+  doc.setFont('helvetica','italic'); doc.setFontSize(13); doc.setTextColor(15,110,99);
   doc.text('Dr. R. Devaraja', pageWidth-margin-145, sigY-6);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(9);
-  doc.setTextColor(100,100,100);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,100,100);
   doc.text('(e-signature)', pageWidth-margin-145, sigY+12);
   doc.text('Reg. No. 100066', pageWidth-margin-145, sigY+24);
-
-  // Footer
-  const pageHeight = doc.internal.pageSize.getHeight();
-  doc.setFontSize(8.5);
-  doc.setTextColor(150,150,150);
-  doc.text('Generated via H.S. Hospital digital prescription system', margin, pageHeight-30);
-
-  return doc.output('blob');
+  doc.setFontSize(8.5); doc.setTextColor(170,170,170);
+  doc.text('Generated via H.S. Hospital digital system', margin, pageHeight-20);
 }
 
-function showResult(url, name){
-  document.getElementById('linkOut').value = url;
-  document.getElementById('waLink').href = `https://wa.me/?text=${encodeURIComponent('Prescription for ' + name + ': ' + url)}`;
-  document.getElementById('result').classList.add('show');
-  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+// ========================
+// PRESCRIPTION
+// ========================
+function showPreview(){
+  const name   = document.getElementById('pname').value.trim();
+  const age    = document.getElementById('page').value.trim();
+  const gender = document.getElementById('pgender').value;
+  const dateVal= document.getElementById('pdate').value;
+  const diag   = document.getElementById('pdiag').value.trim();
+  const advice = document.getElementById('advice').value.trim();
+
+  if(!name){ setStatus('rxStatus',"Enter patient's name.", true); return; }
+
+  let rxLines = [];
+  const quick = document.getElementById('tabQuick').classList.contains('active');
+  if(quick){
+    const txt = document.getElementById('quickText').value.trim();
+    if(!txt){ setStatus('rxStatus',"Enter prescription text.", true); return; }
+    rxLines = txt.split('\n').filter(l=>l.trim());
+  } else {
+    rxLines = getStructuredLines();
+    if(!rxLines.length){ setStatus('rxStatus',"Add at least one medicine.", true); return; }
+  }
+
+  setStatus('rxStatus','');
+  const dateStr = formatDate(dateVal || new Date().toISOString().slice(0,10));
+
+  let html = `<div class="plabel">Patient</div><div class="pval">${name}</div>`;
+  if(age||gender) html += `<div style="margin-top:6px"><span class="plabel">Age / Gender &nbsp;</span><span class="pval">${[age,gender].filter(Boolean).join(' / ')}</span></div>`;
+  html += `<div style="margin-top:6px"><span class="plabel">Date &nbsp;</span><span class="pval">${dateStr}</span></div>`;
+  if(diag) html += `<div style="margin-top:6px"><span class="plabel">Diagnosis &nbsp;</span><span class="pval">${diag}</span></div>`;
+  html += `<div class="ph"><div class="rx-symbol">Rx</div>`;
+  rxLines.forEach((l,i)=>{ html += `<div class="rx-line">${i+1}.&nbsp;&nbsp;${l}</div>`; });
+  html += `</div>`;
+  if(advice) html += `<div class="ph"><div class="plabel">Advice</div><div style="font-size:13.5px;white-space:pre-wrap">${advice}</div></div>`;
+  html += `<div class="ph" style="font-size:12px;color:#888">Dr. R. Devaraja &nbsp;|&nbsp; Reg. No. 100066 &nbsp;|&nbsp; H.S. Hospital</div>`;
+
+  document.getElementById('modalTitle').textContent = 'Preview — Prescription';
+  document.getElementById('previewBody').innerHTML = html;
+  document.getElementById('confirmBtn').onclick = ()=>{ closePreview(); generateRxPDF(); };
+  document.getElementById('previewOverlay').classList.add('show');
 }
 
-function copyLink(){
-  const input = document.getElementById('linkOut');
-  input.select();
-  input.setSelectionRange(0, 99999);
-  navigator.clipboard.writeText(input.value).then(() => {
-    setStatus("Link copied.");
-  }).catch(() => {
-    document.execCommand('copy');
-  });
+async function generateRxPDF(){
+  const name   = document.getElementById('pname').value.trim();
+  const age    = document.getElementById('page').value.trim();
+  const gender = document.getElementById('pgender').value;
+  const dateVal= document.getElementById('pdate').value;
+  const diag   = document.getElementById('pdiag').value.trim();
+  const advice = document.getElementById('advice').value.trim();
+  const dateStr= formatDate(dateVal || new Date().toISOString().slice(0,10));
+  const quick  = document.getElementById('tabQuick').classList.contains('active');
+  const rxLines= quick
+    ? document.getElementById('quickText').value.trim().split('\n').filter(l=>l.trim())
+    : getStructuredLines();
+
+  setStatus('rxStatus','Generating PDF...');
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt',format:'a4'});
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 50;
+    let y = drawLetterhead(doc);
+
+    // Patient block
+    doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(30,40,45);
+    doc.text('Patient:', margin, y);
+    doc.setFont('helvetica','normal'); doc.text(name, margin+55, y);
+    doc.setFont('helvetica','bold'); doc.text('Date:', pageWidth-margin-140, y);
+    doc.setFont('helvetica','normal'); doc.text(dateStr, pageWidth-margin-105, y);
+    y+=16;
+    if(age||gender){
+      doc.setFont('helvetica','bold'); doc.text('Age / Gender:', margin, y);
+      doc.setFont('helvetica','normal'); doc.text([age,gender].filter(Boolean).join(' / '), margin+90, y); y+=16;
+    }
+    if(diag){
+      doc.setFont('helvetica','bold'); doc.text('Diagnosis:', margin, y);
+      doc.setFont('helvetica','normal');
+      const dl = doc.splitTextToSize(diag, pageWidth-margin*2-75);
+      doc.text(dl, margin+75, y); y+=14*dl.length;
+    }
+    y+=10;
+    doc.setDrawColor(220,220,220); doc.line(margin, y, pageWidth-margin, y); y+=26;
+
+    doc.setFont('helvetica','bolditalic'); doc.setFontSize(20); doc.setTextColor(15,110,99);
+    doc.text('Rx', margin, y); y+=22;
+    doc.setFont('helvetica','normal'); doc.setFontSize(11.5); doc.setTextColor(30,40,45);
+    rxLines.forEach((line,idx)=>{
+      const wrapped = doc.splitTextToSize(`${idx+1}.  ${line}`, pageWidth-margin*2-10);
+      if(y>720){doc.addPage(); y=50;}
+      doc.text(wrapped, margin+10, y); y+=17*wrapped.length+6;
+    });
+    if(advice){
+      y+=10; doc.setDrawColor(220,220,220); doc.line(margin, y, pageWidth-margin, y); y+=18;
+      doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.text('Advice:', margin, y); y+=15;
+      doc.setFont('helvetica','normal');
+      const al = doc.splitTextToSize(advice, pageWidth-margin*2);
+      doc.text(al, margin, y);
+    }
+    drawSignature(doc);
+    const blob = doc.output('blob');
+    setStatus('rxStatus','Uploading...');
+    const url = await uploadPDF(blob, 'rx');
+    document.getElementById('rxLink').value = url;
+    document.getElementById('rxWaLink').href = `https://wa.me/?text=${encodeURIComponent('Prescription for '+name+': '+url)}`;
+    document.getElementById('rxResult').classList.add('show');
+    document.getElementById('rxResult').scrollIntoView({behavior:'smooth',block:'center'});
+    setStatus('rxStatus','');
+  }catch(err){
+    setStatus('rxStatus','Error: '+err.message, true);
+  }
 }
 
-function resetForm(){
-  document.getElementById('pname').value='';
-  document.getElementById('page').value='';
+function resetRx(){
+  ['pname','page','pdiag','quickText'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pgender').value='';
-  document.getElementById('pdate').value='';
-  document.getElementById('pdiag').value='';
+  document.getElementById('pdate').valueAsDate=new Date();
   document.getElementById('advice').value='';
-  document.getElementById('quickText').value='';
-  document.getElementById('rxRows').innerHTML='';
-  rowCount = 0;
+  document.getElementById('rxRows').innerHTML=''; rowCount=0;
   setMode('quick');
-  document.getElementById('result').classList.remove('show');
-  setStatus('');
-  window.scrollTo({top:0, behavior:'smooth'});
+  document.getElementById('rxResult').classList.remove('show');
+  setStatus('rxStatus','');
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// init
+// ========================
+// MEDICAL CERTIFICATE
+// ========================
+function previewMC(){
+  const name   = document.getElementById('mcName').value.trim();
+  const age    = document.getElementById('mcAge').value.trim();
+  const gender = document.getElementById('mcGender').value;
+  const weight = document.getElementById('mcWeight').value.trim();
+  const diag   = document.getElementById('mcDiag').value.trim();
+  const from   = document.getElementById('mcFrom').value;
+  const to     = document.getElementById('mcTo').value;
+  const remarks= document.getElementById('mcRemarks').value.trim();
+
+  if(!name){ setStatus('mcStatus',"Enter patient's name.", true); return; }
+  if(!from||!to){ setStatus('mcStatus',"Enter both From and To dates.", true); return; }
+
+  setStatus('mcStatus','');
+  const fromStr = formatDate(from);
+  const toStr   = formatDate(to);
+  const today   = formatDate(new Date().toISOString().slice(0,10));
+
+  let html = `<div class="plabel">Patient</div><div class="pval">${name}</div>`;
+  const meta = [age&&`Age: ${age}`, gender&&`Gender: ${gender}`, weight&&`Weight: ${weight} kg`].filter(Boolean).join('  |  ');
+  if(meta) html += `<div style="margin-top:6px;font-size:13px;color:var(--ink-soft)">${meta}</div>`;
+  if(diag) html += `<div style="margin-top:6px"><span class="plabel">Condition &nbsp;</span><span class="pval">${diag}</span></div>`;
+  html += `<div class="ph"><div class="plabel">Rest Period</div><div class="pval">${fromStr} — ${toStr}</div></div>`;
+  if(remarks) html += `<div class="ph"><div class="plabel">Remarks</div><div style="font-size:13.5px;white-space:pre-wrap">${remarks}</div></div>`;
+  html += `<div class="ph" style="font-size:12px;color:#888">Issued: ${today} &nbsp;|&nbsp; Dr. R. Devaraja &nbsp;|&nbsp; Reg. No. 100066</div>`;
+
+  document.getElementById('modalTitle').textContent = 'Preview — Medical Certificate';
+  document.getElementById('previewBody').innerHTML = html;
+  document.getElementById('confirmBtn').onclick = ()=>{ closePreview(); generateMCPDF(); };
+  document.getElementById('previewOverlay').classList.add('show');
+}
+
+async function generateMCPDF(){
+  const name   = document.getElementById('mcName').value.trim();
+  const age    = document.getElementById('mcAge').value.trim();
+  const gender = document.getElementById('mcGender').value;
+  const weight = document.getElementById('mcWeight').value.trim();
+  const diag   = document.getElementById('mcDiag').value.trim();
+  const from   = document.getElementById('mcFrom').value;
+  const to     = document.getElementById('mcTo').value;
+  const remarks= document.getElementById('mcRemarks').value.trim();
+  const fromStr= formatDate(from);
+  const toStr  = formatDate(to);
+  const today  = formatDate(new Date().toISOString().slice(0,10));
+
+  setStatus('mcStatus','Generating PDF...');
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt',format:'a4'});
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 50;
+    let y = drawLetterhead(doc);
+
+    // Title
+    doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(15,110,99);
+    const title = 'MEDICAL FITNESS CERTIFICATE';
+    const tW = doc.getTextWidth(title);
+    doc.text(title, (pageWidth-tW)/2, y); y+=8;
+    doc.setDrawColor(15,110,99); doc.setLineWidth(0.8);
+    doc.line((pageWidth-tW)/2, y, (pageWidth-tW)/2+tW, y); y+=22;
+
+    // Issued date
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(100,100,100);
+    doc.text(`Date of Issue: ${today}`, pageWidth-margin-130, y); y+=20;
+
+    // Certificate body
+    doc.setFont('helvetica','normal'); doc.setFontSize(11.5); doc.setTextColor(30,40,45);
+    const parts = [age&&`aged ${age}`, gender&&gender, weight&&`weighing ${weight} kg`].filter(Boolean);
+    const subjectLine = parts.length ? `${name}, ${parts.join(', ')},` : `${name},`;
+    const conditionLine = diag
+      ? `was under my care and treatment for ${diag}.`
+      : `was under my care and is advised rest for medical reasons.`;
+    const restLine = `This patient is advised complete rest and is unfit for regular activities from ${fromStr} to ${toStr} (inclusive).`;
+
+    const bodyText = `This is to certify that ${subjectLine} ${conditionLine}\n\n${restLine}`;
+    const wrapped = doc.splitTextToSize(bodyText, pageWidth-margin*2);
+    doc.text(wrapped, margin, y); y += 16*wrapped.length + 16;
+
+    if(remarks){
+      doc.setFont('helvetica','italic'); doc.setFontSize(11);
+      const rw = doc.splitTextToSize(`Remarks: ${remarks}`, pageWidth-margin*2);
+      doc.text(rw, margin, y); y += 14*rw.length;
+    }
+
+    drawSignature(doc);
+    const blob = doc.output('blob');
+    setStatus('mcStatus','Uploading...');
+    const url = await uploadPDF(blob, 'mc');
+    document.getElementById('mcLink').value = url;
+    document.getElementById('mcWaLink').href = `https://wa.me/?text=${encodeURIComponent('Medical Certificate for '+name+': '+url)}`;
+    document.getElementById('mcResult').classList.add('show');
+    document.getElementById('mcResult').scrollIntoView({behavior:'smooth',block:'center'});
+    setStatus('mcStatus','');
+  }catch(err){
+    setStatus('mcStatus','Error: '+err.message, true);
+  }
+}
+
+function resetMC(){
+  ['mcName','mcAge','mcWeight','mcDiag','mcRemarks'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mcGender').value='';
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('mcFrom').value=today;
+  document.getElementById('mcTo').value=today;
+  document.getElementById('mcResult').classList.remove('show');
+  setStatus('mcStatus','');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ---- INIT ----
 document.getElementById('pdate').valueAsDate = new Date();
+document.getElementById('mcFrom').valueAsDate = new Date();
+document.getElementById('mcTo').valueAsDate = new Date();
 </script>
 </body>
 </html>
