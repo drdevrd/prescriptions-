@@ -180,6 +180,13 @@ textarea{min-height:120px;resize:vertical;line-height:1.5;}
 
   <div class="card">
     <h2><span class="num">2</span>Rest Period</h2>
+    <label for="mcType">Nature of rest advised</label>
+    <select id="mcType">
+      <option value="complete bed rest and is advised to remain at home">Complete bed rest</option>
+      <option value="rest at home and is advised to avoid physical exertion">Rest at home</option>
+      <option value="rest and is unfit to attend school">Unfit for school</option>
+      <option value="rest and is unfit to attend work/duty">Unfit for work/duty</option>
+    </select>
     <div class="row2">
       <div>
         <label for="mcFrom">From date</label>
@@ -538,6 +545,7 @@ function previewMC(){
   const gender = document.getElementById('mcGender').value;
   const weight = document.getElementById('mcWeight').value.trim();
   const diag   = document.getElementById('mcDiag').value.trim();
+  const restType = document.getElementById('mcType').value;
   const from   = document.getElementById('mcFrom').value;
   const to     = document.getElementById('mcTo').value;
   const remarks= document.getElementById('mcRemarks').value.trim();
@@ -550,13 +558,26 @@ function previewMC(){
   const toStr   = formatDate(to);
   const today   = formatDate(new Date().toISOString().slice(0,10));
 
-  let html = `<div class="plabel">Patient</div><div class="pval">${name}</div>`;
-  const meta = [age&&`Age: ${age}`, gender&&`Gender: ${gender}`, weight&&`Weight: ${weight} kg`].filter(Boolean).join('  |  ');
-  if(meta) html += `<div style="margin-top:6px;font-size:13px;color:var(--ink-soft)">${meta}</div>`;
-  if(diag) html += `<div style="margin-top:6px"><span class="plabel">Condition &nbsp;</span><span class="pval">${diag}</span></div>`;
-  html += `<div class="ph"><div class="plabel">Rest Period</div><div class="pval">${fromStr} — ${toStr}</div></div>`;
-  if(remarks) html += `<div class="ph"><div class="plabel">Remarks</div><div style="font-size:13.5px;white-space:pre-wrap">${remarks}</div></div>`;
-  html += `<div class="ph" style="font-size:12px;color:#888">Issued: ${today} &nbsp;|&nbsp; Dr. R. Devaraja &nbsp;|&nbsp; Reg. No. 100066</div>`;
+  const prefix = gender==='Female' ? 'Ms.' : gender==='Male' ? 'Mr.' : '';
+  const parts  = [age&&`aged ${age}`, gender&&gender, weight&&`weighing ${weight} kg`].filter(Boolean);
+  const subject= parts.length ? `${prefix}${prefix?' ':''}${name}, ${parts.join(', ')},` : `${name},`;
+  const condLine = diag
+    ? `was under my care and treatment for <strong>${diag}</strong>.`
+    : `was under my care and treatment for medical reasons.`;
+  const restLine = `This patient is advised <strong>${restType}</strong> from <strong>${fromStr}</strong> to <strong>${toStr}</strong> (inclusive).`;
+
+  let html = `
+    <div style="font-size:11px;color:#888;margin-bottom:14px;text-align:right">Date of Issue: ${today}</div>
+    <div style="font-size:14px;line-height:1.9;color:var(--ink)">
+      This is to certify that ${subject} ${condLine}
+    </div>
+    <div style="font-size:14px;line-height:1.9;color:var(--ink);margin-top:12px">
+      ${restLine}
+    </div>`;
+  if(remarks){
+    html += `<div style="margin-top:12px;font-size:13.5px;font-style:italic;color:var(--ink-soft)">${remarks}</div>`;
+  }
+  html += `<div class="ph" style="font-size:12px;color:#888">Dr. R. Devaraja &nbsp;|&nbsp; Reg. No. 100066 &nbsp;|&nbsp; H.S. Hospital</div>`;
 
   document.getElementById('modalTitle').textContent = 'Preview — Medical Certificate';
   document.getElementById('previewBody').innerHTML = html;
@@ -565,17 +586,18 @@ function previewMC(){
 }
 
 async function generateMCPDF(){
-  const name   = document.getElementById('mcName').value.trim();
-  const age    = document.getElementById('mcAge').value.trim();
-  const gender = document.getElementById('mcGender').value;
-  const weight = document.getElementById('mcWeight').value.trim();
-  const diag   = document.getElementById('mcDiag').value.trim();
-  const from   = document.getElementById('mcFrom').value;
-  const to     = document.getElementById('mcTo').value;
-  const remarks= document.getElementById('mcRemarks').value.trim();
-  const fromStr= formatDate(from);
-  const toStr  = formatDate(to);
-  const today  = formatDate(new Date().toISOString().slice(0,10));
+  const name    = document.getElementById('mcName').value.trim();
+  const age     = document.getElementById('mcAge').value.trim();
+  const gender  = document.getElementById('mcGender').value;
+  const weight  = document.getElementById('mcWeight').value.trim();
+  const diag    = document.getElementById('mcDiag').value.trim();
+  const restType= document.getElementById('mcType').value;
+  const from    = document.getElementById('mcFrom').value;
+  const to      = document.getElementById('mcTo').value;
+  const remarks = document.getElementById('mcRemarks').value.trim();
+  const fromStr = formatDate(from);
+  const toStr   = formatDate(to);
+  const today   = formatDate(new Date().toISOString().slice(0,10));
 
   setStatus('mcStatus','Generating PDF...');
   try{
@@ -599,12 +621,13 @@ async function generateMCPDF(){
 
     // Certificate body
     doc.setFont('helvetica','normal'); doc.setFontSize(11.5); doc.setTextColor(30,40,45);
+    const prefix = gender==='Female' ? 'Ms.' : gender==='Male' ? 'Mr.' : '';
     const parts = [age&&`aged ${age}`, gender&&gender, weight&&`weighing ${weight} kg`].filter(Boolean);
-    const subjectLine = parts.length ? `${name}, ${parts.join(', ')},` : `${name},`;
+    const subjectLine = parts.length ? `${prefix}${prefix?' ':''}${name}, ${parts.join(', ')},` : `${name},`;
     const conditionLine = diag
       ? `was under my care and treatment for ${diag}.`
-      : `was under my care and is advised rest for medical reasons.`;
-    const restLine = `This patient is advised complete rest and is unfit for regular activities from ${fromStr} to ${toStr} (inclusive).`;
+      : `was under my care and treatment for medical reasons.`;
+    const restLine = `This patient is advised ${restType} from ${fromStr} to ${toStr} (inclusive).`;
 
     const bodyText = `This is to certify that ${subjectLine} ${conditionLine}\n\n${restLine}`;
     const wrapped = doc.splitTextToSize(bodyText, pageWidth-margin*2);
@@ -633,6 +656,7 @@ async function generateMCPDF(){
 function resetMC(){
   ['mcName','mcAge','mcWeight','mcDiag','mcRemarks'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('mcGender').value='';
+  document.getElementById('mcType').selectedIndex=0;
   const today = new Date().toISOString().slice(0,10);
   document.getElementById('mcFrom').value=today;
   document.getElementById('mcTo').value=today;
